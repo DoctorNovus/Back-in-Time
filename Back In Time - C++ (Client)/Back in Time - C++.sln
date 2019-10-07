@@ -1,9 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28307.779
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29326.143
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Back in Time - C++", "Back in Time - C++\Back in Time - C++.vcxproj", "{436FB53F-3A2F-4E56-BC8D-3C54B0B433E9}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Back in Time Server", "..\Back In Time - C++ (Server)\Back in Time Server\Back in Time Server.vcxproj", "{40CB8DC3-AC72-4A9B-9022-31E5F028D41A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,14 @@ Global
 		{436FB53F-3A2F-4E56-BC8D-3C54B0B433E9}.Release|x64.Build.0 = Release|x64
 		{436FB53F-3A2F-4E56-BC8D-3C54B0B433E9}.Release|x86.ActiveCfg = Release|Win32
 		{436FB53F-3A2F-4E56-BC8D-3C54B0B433E9}.Release|x86.Build.0 = Release|Win32
+		{40CB8DC3-AC72-4A9B-9022-31E5F028D41A}.Debug|x64.ActiveCfg = Debug|x64
+		{40CB8DC3-AC72-4A9B-9022-31E5F028D41A}.Debug|x64.Build.0 = Debug|x64
+		{40CB8DC3-AC72-4A9B-9022-31E5F028D41A}.Debug|x86.ActiveCfg = Debug|Win32
+		{40CB8DC3-AC72-4A9B-9022-31E5F028D41A}.Debug|x86.Build.0 = Debug|Win32
+		{40CB8DC3-AC72-4A9B-9022-31E5F028D41A}.Release|x64.ActiveCfg = Release|x64
+		{40CB8DC3-AC72-4A9B-9022-31E5F028D41A}.Release|x64.Build.0 = Release|x64
+		{40CB8DC3-AC72-4A9B-9022-31E5F028D41A}.Release|x86.ActiveCfg = Release|Win32
+		{40CB8DC3-AC72-4A9B-9022-31E5F028D41A}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
