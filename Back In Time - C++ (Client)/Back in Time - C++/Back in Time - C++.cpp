@@ -75,18 +75,33 @@ public:
 
 sf::Packet& operator <<(sf::Packet& packet, const playerClass& player)
 {
-	return packet << player.name << player.xpos << player.ypos << player.xvel << player.yvel;
+	return packet << player.name << player.xpos << player.ypos << player.xvel << player.yvel;;
 }
 
 sf::Packet& operator >>(sf::Packet& packet, playerClass& player)
 {
-	return packet >> player.name >> player.xpos >> player.ypos >> player.xvel >> player.yvel;
+	return packet >> player.name << player.xpos << player.ypos << player.xvel << player.yvel;
 }
 
 void sendCharacter(playerClass player) {
 	sf::Packet packet;
 	
 	packet << player;
+
+	socket.send(packet);
+}
+
+void addPlayers(sf::Packet packet) {
+	std::cout << packet << "\n";
+}
+
+void sendPlayers(std::vector<playerClass> players) {
+
+	sf::Packet packet;
+
+	for (int x1 = 0; x1 < players.size(); ++x1) {
+		packet << players.at(x1);
+	}
 
 	socket.send(packet);
 }
@@ -108,16 +123,18 @@ int main()
 	std::string username;
 	std::cout << "Choose username: ";
 	std::cin >> username;
-	std::cout << "Choose username: " << username << "\n";
+	std::cout << "Choosen username: " << username << "\n";
 
 	playerClass player(spriteObj, spriteTexture);
 	player.name = username;
 
 	sendCharacter(player);
 
-
-
 	sf::RenderWindow window(sf::VideoMode(windowWidth, windowHeight), title, sf::Style::Titlebar | sf::Style::Close);
+
+	sf::Packet packet;
+
+	addPlayers(packet);
 
 	//Main Loop:
 	while (window.isOpen()) {
@@ -135,12 +152,9 @@ int main()
 
 		window.clear();
 
-		window.draw(player.image);
-		player.update();
-
 		for (auto x = 0u; x < players.size(); x++) {
-			window.draw(players[x].image);
-			players[x].update();
+			window.draw(players.at(x).image);
+			players.at(x).update();
 		};
 
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) player.up = true;
@@ -152,6 +166,12 @@ int main()
 		if (!sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) player.down = false;
 		if (!sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) player.left = false;
 		if (!sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) player.right = false;
+
+		sendPlayers(players);
+
 		window.display();
+
 	}
+
+	return 0;
 }

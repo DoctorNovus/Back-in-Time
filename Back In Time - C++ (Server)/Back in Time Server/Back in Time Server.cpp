@@ -3,6 +3,8 @@
 #include <fstream>
 #include <istream>
 #include <string>
+#include <set>
+#include <algorithm>
 #include <SFML/Graphics.hpp>
 #include <SFML/Network.hpp>
 #include <nlohmann/json.hpp>
@@ -10,23 +12,6 @@
 // for convenience
 using json = nlohmann::json;
 sf::TcpSocket client;
-
-
-bool contains(std::vector<std::string> v, std::string string1) {
-	if (std::find(v.begin(), v.end(), string1) != v.end())
-	{
-		return true;
-	}
-
-	return false;
-}
-
-
-//void addPlayer(sf::TcpSocket client, playerClass player) {
-//
-//	players.insert(player);
-//	sendPlayers();
-//}
 
 struct playerClass {
 public:
@@ -89,33 +74,34 @@ public:
 	}
 };
 
+std::vector<playerClass> players;
+
+
+bool checkPlayer(playerClass player) {
+	for (int x1 = 0; x1 < players.size(); ++x1) {
+		if (players.at(x1).name == player.name) {
+			return true;
+		}
+	}
+
+	return false;
+};
+
 
 sf::Packet& operator <<(sf::Packet& packet, const playerClass& player)
 {
-	return packet << player.name << player.xpos << player.ypos << player.xvel << player.yvel;
+	return packet << player;/*player.name << player.xpos << player.ypos << player.xvel << player.yvel;*/
 }
 
 sf::Packet& operator >>(sf::Packet& packet, playerClass& player)
 {
-	return packet >> player.name >> player.xpos >> player.ypos >> player.xvel >> player.yvel;
+	return packet >> player;
 }
-
-//std::vector<playerClass> players;
-//
-//void sendPlayers() {
-//	sf::Packet packet;
-//
-//	for (auto x = 0u; x < players.size(); x++) {
-//		packet << players[x];
-//	};
-//
-//	client.send(packet);
-//}
 
 int main() {
 	bool running = true;
+	std::cout << "Server running..." << "\n";
 	while (running) {
-		std::vector<std::string> players;
 		sf::TcpListener listener;
 
 		// bind the listener to a port
@@ -129,17 +115,37 @@ int main() {
 		{
 			std::cout << "Unable to accept client: \n";
 		}
+		else {
+			std::cout << "Able to accept client: \n";
+			sf::Packet packet;
+
+			for (int x1 = 0; x1 < players.size(); ++x1) {
+				packet << players.at(x1);
+			}
+
+			client.send(packet);
+		}
 
 		sf::Packet receivedPacket;
 		playerClass player;
 		// TCP socket:
 		if (client.receive(receivedPacket) != sf::Socket::Done)
 		{
-			// error...
+			std::cout << "Error when recieving packets";
 		}
 		else {
 			receivedPacket >> player;
+			std::cout << player.name << "\n";
+			std::cout << "Received packet of player: " << player.name << "\n";
 		}
-		std::cout << receivedPacket << "\n";
+
+		if (!checkPlayer(player)) {
+			players.push_back(player);
+			std::cout << player.name << " added to the system.";
+		}
+		else {
+			std::cout << player.name << " is already in the system.";
+		}
+
 	}
 }
