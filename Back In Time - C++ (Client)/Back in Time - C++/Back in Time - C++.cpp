@@ -34,10 +34,17 @@ public:
 	sf::Sprite image;
 	sf::Texture texture;
 
-	playerClass(sf::Sprite sprite, sf::Texture texture) {
-		image = sprite;
-		texture = texture;
+	playerClass() {
+
 	};
+
+	void addSprite(sf::Sprite sprite) {
+		image = sprite;
+	}
+
+	void addTexture(sf::Texture texture) {
+		texture = texture;
+	}
 
 	void update() {
 		if (up) {
@@ -73,6 +80,8 @@ public:
 	}
 };
 
+std::vector<playerClass> players;
+
 sf::Packet& operator <<(sf::Packet& packet, const playerClass& player)
 {
 	return packet << player.name << player.xpos << player.ypos << player.xvel << player.yvel;;
@@ -89,6 +98,8 @@ void sendCharacter(playerClass player) {
 	packet << player;
 
 	socket.send(packet);
+
+	std::cout << "Sent player: " << player.name << " to the server. \n";
 }
 
 void addPlayers(sf::Packet packet) {
@@ -106,35 +117,82 @@ void sendPlayers(std::vector<playerClass> players) {
 	socket.send(packet);
 }
 
+bool checkPlayer(playerClass player) {
+	for (int x1 = 0; x1 < players.size(); ++x1) {
+		if (players.at(x1).name == player.name) {
+			return true;
+		}
+	}
+
+	return false;
+};
+
+
 int main()
 {
 	sf::Socket::Status status = socket.connect("25.87.188.38", 53000);
+	socket.setBlocking({ false });
 	if (status != sf::Socket::Done)
 	{
-		// error...
+		return 0;
 	}
 
 	sf::Texture spriteTexture;
 	spriteTexture.loadFromFile("data/images/dragon_knight.png");
 	sf::Sprite spriteObj(spriteTexture);
 
-	std::vector<playerClass> players;
-
 	std::string username;
 	std::cout << "Choose username: ";
 	std::cin >> username;
 	std::cout << "Choosen username: " << username << "\n";
 
-	playerClass player(spriteObj, spriteTexture);
-	player.name = username;
-
-	sendCharacter(player);
+	playerClass main_player;
+	main_player.name = username;
 
 	sf::RenderWindow window(sf::VideoMode(windowWidth, windowHeight), title, sf::Style::Titlebar | sf::Style::Close);
 
-	sf::Packet packet;
 
-	addPlayers(packet);
+	sendCharacter(main_player);
+
+	sf::Packet packet2;
+
+	addPlayers(packet2);
+
+
+	sf::Packet playerPacket;
+
+	while (socket.receive(playerPacket) == sf::Socket::Done){
+		std::cout << "Socket received \n";
+		std::string name;
+		int xpos;
+		int ypos;
+		int xvel;
+		int yvel;
+
+		if (playerPacket >> name >> xpos >> ypos >> xvel >> yvel) {
+			playerClass player;
+			player.name = name;
+			player.xpos = xpos;
+			player.ypos = ypos;
+			player.xvel = xvel;
+			player.yvel = yvel;
+
+			if (!checkPlayer(player)) {
+				players.push_back(player);
+				std::cout << "Player |" << player.name << "| added to players. \n";
+				for (auto x = 0u; x < players.size(); x++) {
+					std::cout << "Player " << x << ": " << player.name << "\n";
+				};
+			}
+			else {
+				std::cout << "Player |" << player.name << "| already in the system. \n";
+			}
+		}
+		else {
+			std::cout << "Can't extract player";
+			std::cout << playerPacket << "\n";
+		}
+	}
 
 	//Main Loop:
 	while (window.isOpen()) {
@@ -157,20 +215,19 @@ int main()
 			players.at(x).update();
 		};
 
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) player.up = true;
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) player.down = true;
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) player.left = true;
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) player.right = true;
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) main_player.up = true;
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) main_player.down = true;
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) main_player.left = true;
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) main_player.right = true;
 
-		if (!sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) player.up = false;
-		if (!sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) player.down = false;
-		if (!sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) player.left = false;
-		if (!sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) player.right = false;
+		if (!sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) main_player.up = false;
+		if (!sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) main_player.down = false;
+		if (!sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) main_player.left = false;
+		if (!sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) main_player.right = false;
 
 		sendPlayers(players);
 
 		window.display();
-
 	}
 
 	return 0;

@@ -87,6 +87,17 @@ bool checkPlayer(playerClass player) {
 	return false;
 };
 
+void updateAllPlayers() {
+	if (players.size() > 0) {
+		for (int x1 = 0; x1 < players.size(); ++x1) {
+			sf::Packet packet;
+
+			packet << players.at(x1);
+
+			client.send(packet);
+		}
+	}
+}
 
 sf::Packet& operator <<(sf::Packet& packet, const playerClass& player)
 {
@@ -117,35 +128,47 @@ int main() {
 		}
 		else {
 			std::cout << "Able to accept client: \n";
-			sf::Packet packet;
-
-			for (int x1 = 0; x1 < players.size(); ++x1) {
-				packet << players.at(x1);
-			}
-
-			client.send(packet);
 		}
 
 		sf::Packet receivedPacket;
-		playerClass player;
 		// TCP socket:
 		if (client.receive(receivedPacket) != sf::Socket::Done)
 		{
 			std::cout << "Error when recieving packets";
 		}
 		else {
-			receivedPacket >> player;
-			std::cout << player.name << "\n";
-			std::cout << "Received packet of player: " << player.name << "\n";
-		}
+			std::cout << "Recieved packet \n";
 
-		if (!checkPlayer(player)) {
-			players.push_back(player);
-			std::cout << player.name << " added to the system.";
-		}
-		else {
-			std::cout << player.name << " is already in the system.";
-		}
+			std::string name;
+			int xpos;
+			int ypos;
+			int xvel;
+			int yvel;
 
+			if (receivedPacket >> name >> xpos >> ypos >> xvel >> yvel) {
+
+				std::cout << name << "\n";
+				std::cout << "Received player: " << name << "\n";
+
+				playerClass player;
+				player.name = name;
+				player.xpos = xpos;
+				player.ypos = ypos;
+				player.xvel = xvel;
+				player.yvel = yvel;
+
+				if (!checkPlayer(player)) {
+					players.push_back(player);
+					std::cout << player.name << " added to the system.";
+					updateAllPlayers();
+				}
+				else {
+					std::cout << player.name << " is already in the system.";
+				}
+			}
+			else {
+				std::cout << "Unable to extract player, the packet instead returns " << receivedPacket;
+			}
+		}
 	}
 }
