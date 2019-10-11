@@ -72,8 +72,8 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>C:\Users\skinn\OneDrive\Documents\Projects\GameLab\Back In Time - C++ %28Server%29\Back in Time Server\include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Users\skinn\OneDrive\Documents\Projects\GameLab\Back In Time - C++ %28Server%29\Back in Time Server\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Users\skinn\OneDrive\Documents\Projects\GameLab\Back-in-Time\Back In Time - C++ %28Client%29\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Users\skinn\OneDrive\Documents\Projects\GameLab\Back-in-Time\Back In Time - C++ %28Client%29\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>

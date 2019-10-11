@@ -29,16 +29,12 @@ public:
 	sf::Texture texture;
 
 	playerClass() {
+		sf::Texture spriteTexture;
+		spriteTexture.loadFromFile("data/images/dragon_knight.png");
+		sf::Sprite spriteObj(spriteTexture);
 
+		image = spriteObj;
 	};
-
-	void addSprite(sf::Sprite sprite) {
-		image = sprite;
-	}
-
-	void addTexture(sf::Texture texture) {
-		texture = texture;
-	}
 
 	void update() {
 		if (up) {
@@ -76,12 +72,12 @@ public:
 
 sf::Packet& operator <<(sf::Packet& packet, const playerClass& player)
 {
-	return packet << player.name << player.xpos << player.ypos << player.xvel << player.yvel;
+	return packet << player.name << player.xpos << player.ypos << player.xvel << player.yvel << player.up << player.down << player.left << player.right;
 }
 
 sf::Packet& operator >>(sf::Packet& packet, playerClass& player)
 {
-	return packet >> player.name << player.xpos << player.ypos << player.xvel << player.yvel;
+	return packet >> player.name >> player.xpos >> player.ypos >> player.xvel >> player.yvel >> player.up >> player.down >> player.left >> player.right;
 }
 
 
@@ -91,6 +87,10 @@ std::vector<playerClass> players;
 bool checkPlayer(playerClass player) {
 	for (int x1 = 0; x1 < players.size(); ++x1) {
 		if (players.at(x1).name == player.name) {
+			players.at(x1).xpos = player.xpos;
+			players.at(x1).ypos = player.ypos;
+			players.at(x1).xvel = player.xvel;
+			players.at(x1).yvel = player.yvel;
 			return true;
 		}
 	}
@@ -145,8 +145,12 @@ int main() {
 			int ypos;
 			int xvel;
 			int yvel;
+			bool up;
+			bool down;
+			bool left;
+			bool right;
 
-			if (receivedPacket >> name >> xpos >> ypos >> xvel >> yvel) {
+			if (receivedPacket >> name >> xpos >> ypos >> xvel >> yvel >> up >> down >> left >> right) {
 
 				std::cout << name << "\n";
 				std::cout << "Received player: " << name << "\n";

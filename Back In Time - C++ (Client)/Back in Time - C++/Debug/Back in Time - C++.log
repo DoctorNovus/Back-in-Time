@@ -1,2 +1,8 @@
 ﻿  Back in Time - C++.cpp
-  Back in Time - C++.vcxproj -> C:\Users\skinn\OneDrive\Documents\Projects\GameLab\Back In Time - C++\Debug\Back in Time - C++.exe
+c:\users\skinn\onedrive\documents\projects\gamelab\back-in-time\back in time - c++ (client)\back in time - c++\back in time - c++.cpp(113): warning C4018: '<': signed/unsigned mismatch
+c:\users\skinn\onedrive\documents\projects\gamelab\back-in-time\back in time - c++ (client)\back in time - c++\back in time - c++.cpp(121): warning C4018: '<': signed/unsigned mismatch
+c:\users\skinn\onedrive\documents\projects\gamelab\back-in-time\back in time - c++ (client)\back in time - c++\back in time - c++.cpp(191): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+c:\users\skinn\onedrive\documents\projects\gamelab\back-in-time\back in time - c++ (client)\back in time - c++\back in time - c++.cpp(192): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+c:\users\skinn\onedrive\documents\projects\gamelab\back-in-time\back in time - c++ (client)\back in time - c++\back in time - c++.cpp(193): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+c:\users\skinn\onedrive\documents\projects\gamelab\back-in-time\back in time - c++ (client)\back in time - c++\back in time - c++.cpp(194): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+  Back in Time - C++.vcxproj -> C:\Users\skinn\OneDrive\Documents\Projects\GameLab\Back-in-Time\Back In Time - C++ (Client)\Debug\Back in Time - C++.exe

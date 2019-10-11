@@ -25,26 +25,21 @@ public:
 	bool onGround = false;
 	float xvel = 0;
 	float yvel = 0;
-	float xpos = 100;
-	float ypos = 100;
+	float xpos = 0;
+	float ypos = 0;
 	bool up = false;
 	bool down = false;
 	bool left = false;
 	bool right = false;
 	sf::Sprite image;
-	sf::Texture texture;
 
 	playerClass() {
+		sf::Texture spriteTexture;
+		spriteTexture.loadFromFile("data/images/dragon_knight.png");
+		sf::Sprite spriteObj(spriteTexture);
 
+		image = spriteObj;
 	};
-
-	void addSprite(sf::Sprite sprite) {
-		image = sprite;
-	}
-
-	void addTexture(sf::Texture texture) {
-		texture = texture;
-	}
 
 	void update() {
 		if (up) {
@@ -77,6 +72,8 @@ public:
 		image.setPosition(xpos, ypos);
 
 		image.move(sf::Vector2f(xvel, yvel));
+
+		std::cout << "-|" << xpos << "-" << ypos << "|-\n";
 	}
 };
 
@@ -84,12 +81,12 @@ std::vector<playerClass> players;
 
 sf::Packet& operator <<(sf::Packet& packet, const playerClass& player)
 {
-	return packet << player.name << player.xpos << player.ypos << player.xvel << player.yvel;;
+	return packet << player.name << player.xpos << player.ypos << player.xvel << player.yvel << player.up << player.down << player.left << player.right;
 }
 
 sf::Packet& operator >>(sf::Packet& packet, playerClass& player)
 {
-	return packet >> player.name << player.xpos << player.ypos << player.xvel << player.yvel;
+	return packet >> player.name >> player.xpos >> player.ypos >> player.xvel >> player.yvel >> player.up >> player.down >> player.left >> player.right;
 }
 
 void sendCharacter(playerClass player) {
@@ -120,6 +117,10 @@ void sendPlayers(std::vector<playerClass> players) {
 bool checkPlayer(playerClass player) {
 	for (int x1 = 0; x1 < players.size(); ++x1) {
 		if (players.at(x1).name == player.name) {
+			players.at(x1).xpos = player.xpos;
+			players.at(x1).ypos = player.ypos;
+			players.at(x1).xvel = player.xvel;
+			players.at(x1).yvel = player.yvel;
 			return true;
 		}
 	}
@@ -127,18 +128,49 @@ bool checkPlayer(playerClass player) {
 	return false;
 };
 
+void updateMain(bool up, bool down, bool left, bool right, std::string username) {
+	for (int x1 = 0; x1 < players.size(); ++x1) {
+		if (players.at(x1).name == username) {
+			if (up) {
+				players.at(x1).up = true;
+			}
+			else {
+				players.at(x1).up = false;
+			}
+
+			if (down) {
+				players.at(x1).down = true;
+			}
+			else {
+				players.at(x1).down = false;
+			}
+
+			if (left) {
+				players.at(x1).left = true;
+			}
+			else {
+				players.at(x1).left = false;
+			}
+
+			if (right) {
+				players.at(x1).right = true;
+			}
+			else {
+				players.at(x1).right = false;
+			}
+		}
+	}
+}
 
 int main()
 {
 	sf::Socket::Status status = socket.connect("25.87.188.38", 53000);
 	if (status != sf::Socket::Done)
 	{
-		return 0;
+		// Error
 	}
 
-	sf::Texture spriteTexture;
-	spriteTexture.loadFromFile("data/images/dragon_knight.png");
-	sf::Sprite spriteObj(spriteTexture);
+	socket.setBlocking(false);
 
 	std::string username;
 	std::cout << "Choose username: ";
@@ -175,6 +207,26 @@ int main()
 
 		sf::Packet playerPacket;
 
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) updateMain(true, false, false, false, username);
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) updateMain(false, true, false, false, username);
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) updateMain(false, false, true, false, username);
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) updateMain(false, false, false, true, username);
+
+		if (!sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) updateMain(false, false, false, false, username);
+		if (!sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) updateMain(false, false, false, false, username);
+		if (!sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) updateMain(false, false, false, false, username);
+		if (!sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) updateMain(false, false, false, false, username);
+
+		sendPlayers(players);
+
+		for (auto x = 0u; x < players.size(); x++) {
+			window.draw(players.at(x).image);
+			players.at(x).update();
+			if (players.at(x).name == username) {
+				sendCharacter(players.at(x));
+			}
+		};
+
 		while (socket.receive(playerPacket) == sf::Socket::Done) {
 			std::cout << "Socket received \n";
 			std::string name;
@@ -182,14 +234,22 @@ int main()
 			int ypos;
 			int xvel;
 			int yvel;
+			bool up;
+			bool down;
+			bool left;
+			bool right;
 
-			if (playerPacket >> name >> xpos >> ypos >> xvel >> yvel) {
+			if (playerPacket >> name >> xpos >> ypos >> xvel >> yvel >> up >> down >> left >> right) {
 				playerClass player;
 				player.name = name;
 				player.xpos = xpos;
 				player.ypos = ypos;
 				player.xvel = xvel;
 				player.yvel = yvel;
+				player.up = up;
+				player.down = down;
+				player.left = left;
+				player.right = right;
 
 				if (!checkPlayer(player)) {
 					players.push_back(player);
@@ -207,24 +267,6 @@ int main()
 				std::cout << playerPacket << "\n";
 			}
 		}
-
-
-		for (auto x = 0u; x < players.size(); x++) {
-			window.draw(players.at(x).image);
-			players.at(x).update();
-		};
-
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) main_player.up = true;
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) main_player.down = true;
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) main_player.left = true;
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) main_player.right = true;
-
-		if (!sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) main_player.up = false;
-		if (!sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) main_player.down = false;
-		if (!sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) main_player.left = false;
-		if (!sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) main_player.right = false;
-
-		sendPlayers(players);
 
 		window.display();
 	}
