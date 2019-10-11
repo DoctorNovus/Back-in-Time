@@ -131,7 +131,6 @@ bool checkPlayer(playerClass player) {
 int main()
 {
 	sf::Socket::Status status = socket.connect("25.87.188.38", 53000);
-	socket.setBlocking({ false });
 	if (status != sf::Socket::Done)
 	{
 		return 0;
@@ -158,42 +157,6 @@ int main()
 
 	addPlayers(packet2);
 
-
-	sf::Packet playerPacket;
-
-	while (socket.receive(playerPacket) == sf::Socket::Done){
-		std::cout << "Socket received \n";
-		std::string name;
-		int xpos;
-		int ypos;
-		int xvel;
-		int yvel;
-
-		if (playerPacket >> name >> xpos >> ypos >> xvel >> yvel) {
-			playerClass player;
-			player.name = name;
-			player.xpos = xpos;
-			player.ypos = ypos;
-			player.xvel = xvel;
-			player.yvel = yvel;
-
-			if (!checkPlayer(player)) {
-				players.push_back(player);
-				std::cout << "Player |" << player.name << "| added to players. \n";
-				for (auto x = 0u; x < players.size(); x++) {
-					std::cout << "Player " << x << ": " << player.name << "\n";
-				};
-			}
-			else {
-				std::cout << "Player |" << player.name << "| already in the system. \n";
-			}
-		}
-		else {
-			std::cout << "Can't extract player";
-			std::cout << playerPacket << "\n";
-		}
-	}
-
 	//Main Loop:
 	while (window.isOpen()) {
 		sf::Event event;
@@ -209,6 +172,42 @@ int main()
 		}
 
 		window.clear();
+
+		sf::Packet playerPacket;
+
+		while (socket.receive(playerPacket) == sf::Socket::Done) {
+			std::cout << "Socket received \n";
+			std::string name;
+			int xpos;
+			int ypos;
+			int xvel;
+			int yvel;
+
+			if (playerPacket >> name >> xpos >> ypos >> xvel >> yvel) {
+				playerClass player;
+				player.name = name;
+				player.xpos = xpos;
+				player.ypos = ypos;
+				player.xvel = xvel;
+				player.yvel = yvel;
+
+				if (!checkPlayer(player)) {
+					players.push_back(player);
+					std::cout << "Player |" << player.name << "| added to players. \n";
+					for (auto x = 0u; x < players.size(); x++) {
+						std::cout << "Player " << x << ": " << player.name << "\n";
+					};
+				}
+				else {
+					std::cout << "Player |" << player.name << "| already in the system. \n";
+				}
+			}
+			else {
+				std::cout << "Can't extract player";
+				std::cout << playerPacket << "\n";
+			}
+		}
+
 
 		for (auto x = 0u; x < players.size(); x++) {
 			window.draw(players.at(x).image);

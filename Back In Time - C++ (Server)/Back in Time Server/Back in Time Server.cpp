@@ -74,6 +74,17 @@ public:
 	}
 };
 
+sf::Packet& operator <<(sf::Packet& packet, const playerClass& player)
+{
+	return packet << player.name << player.xpos << player.ypos << player.xvel << player.yvel;
+}
+
+sf::Packet& operator >>(sf::Packet& packet, playerClass& player)
+{
+	return packet >> player.name << player.xpos << player.ypos << player.xvel << player.yvel;
+}
+
+
 std::vector<playerClass> players;
 
 
@@ -97,16 +108,6 @@ void updateAllPlayers() {
 			client.send(packet);
 		}
 	}
-}
-
-sf::Packet& operator <<(sf::Packet& packet, const playerClass& player)
-{
-	return packet << player;/*player.name << player.xpos << player.ypos << player.xvel << player.yvel;*/
-}
-
-sf::Packet& operator >>(sf::Packet& packet, playerClass& player)
-{
-	return packet >> player;
 }
 
 int main() {

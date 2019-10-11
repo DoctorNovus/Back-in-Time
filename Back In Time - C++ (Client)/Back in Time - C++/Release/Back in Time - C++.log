@@ -1,13 +1,13 @@
 ﻿  Back in Time - C++.cpp
 c:\users\skinn\onedrive\documents\projects\gamelab\back-in-time\back in time - c++ (client)\back in time - c++\back in time - c++.cpp(113): warning C4018: '<': signed/unsigned mismatch
 c:\users\skinn\onedrive\documents\projects\gamelab\back-in-time\back in time - c++ (client)\back in time - c++\back in time - c++.cpp(121): warning C4018: '<': signed/unsigned mismatch
-c:\users\skinn\onedrive\documents\projects\gamelab\back-in-time\back in time - c++ (client)\back in time - c++\back in time - c++.cpp(175): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-c:\users\skinn\onedrive\documents\projects\gamelab\back-in-time\back in time - c++ (client)\back in time - c++\back in time - c++.cpp(176): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-c:\users\skinn\onedrive\documents\projects\gamelab\back-in-time\back in time - c++ (client)\back in time - c++\back in time - c++.cpp(177): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-c:\users\skinn\onedrive\documents\projects\gamelab\back-in-time\back in time - c++ (client)\back in time - c++\back in time - c++.cpp(178): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+c:\users\skinn\onedrive\documents\projects\gamelab\back-in-time\back in time - c++ (client)\back in time - c++\back in time - c++.cpp(189): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+c:\users\skinn\onedrive\documents\projects\gamelab\back-in-time\back in time - c++ (client)\back in time - c++\back in time - c++.cpp(190): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+c:\users\skinn\onedrive\documents\projects\gamelab\back-in-time\back in time - c++ (client)\back in time - c++\back in time - c++.cpp(191): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+c:\users\skinn\onedrive\documents\projects\gamelab\back-in-time\back in time - c++ (client)\back in time - c++\back in time - c++.cpp(192): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
   Generating code
   1 of 235 functions ( 0.4%) were compiled, the rest were copied from previous compilation.
     0 functions were new in current compilation
-    2 functions had inline decision re-evaluated but remain unchanged
+    0 functions had inline decision re-evaluated but remain unchanged
   Finished generating code
   Back in Time - C++.vcxproj -> C:\Users\skinn\OneDrive\Documents\Projects\GameLab\Back-in-Time\Back In Time - C++ (Client)\Release\Back in Time - C++.exe
