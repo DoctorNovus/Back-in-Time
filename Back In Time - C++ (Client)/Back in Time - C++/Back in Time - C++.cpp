@@ -93,7 +93,7 @@ bool checkPlayer(playerClass player) {
 
 int main()
 {
-	sf::Socket::Status status = socket.connect("25.87.188.38", 53000);
+	sf::Socket::Status status = socket.connect("127.0.0.1", 53000);
 	if (status != sf::Socket::Done)
 	{
 		// Error
