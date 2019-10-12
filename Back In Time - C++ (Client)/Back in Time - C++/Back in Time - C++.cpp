@@ -40,41 +40,6 @@ public:
 
 		image = spriteObj;
 	};
-
-	void update() {
-		if (up) {
-			yvel = -0.5;
-		};
-
-		if (down) {
-			yvel = 0.5;
-		};
-
-		if (left) {
-			xvel = -0.5;
-		};
-
-		if (right) {
-			xvel = 0.5;
-		};
-
-		if (!(up || down)) {
-			yvel = 0;
-		};
-
-		if (!(left || right)) {
-			xvel = 0;
-		};
-
-		xpos += xvel;
-		ypos += yvel;
-
-		image.setPosition(xpos, ypos);
-
-		image.move(sf::Vector2f(xvel, yvel));
-
-		std::cout << "-|" << xpos << "-" << ypos << "|-\n";
-	}
 };
 
 std::vector<playerClass> players;
@@ -95,8 +60,6 @@ void sendCharacter(playerClass player) {
 	packet << player;
 
 	socket.send(packet);
-
-	std::cout << "Sent player: " << player.name << " to the server. \n";
 }
 
 void addPlayers(sf::Packet packet) {
@@ -128,40 +91,6 @@ bool checkPlayer(playerClass player) {
 	return false;
 };
 
-void updateMain(bool up, bool down, bool left, bool right, std::string username) {
-	for (int x1 = 0; x1 < players.size(); ++x1) {
-		if (players.at(x1).name == username) {
-			if (up) {
-				players.at(x1).up = true;
-			}
-			else {
-				players.at(x1).up = false;
-			}
-
-			if (down) {
-				players.at(x1).down = true;
-			}
-			else {
-				players.at(x1).down = false;
-			}
-
-			if (left) {
-				players.at(x1).left = true;
-			}
-			else {
-				players.at(x1).left = false;
-			}
-
-			if (right) {
-				players.at(x1).right = true;
-			}
-			else {
-				players.at(x1).right = false;
-			}
-		}
-	}
-}
-
 int main()
 {
 	sf::Socket::Status status = socket.connect("25.87.188.38", 53000);
@@ -177,13 +106,12 @@ int main()
 	std::cin >> username;
 	std::cout << "Choosen username: " << username << "\n";
 
-	playerClass main_player;
-	main_player.name = username;
-
 	sf::RenderWindow window(sf::VideoMode(windowWidth, windowHeight), title, sf::Style::Titlebar | sf::Style::Close);
 
+	playerClass main;
+	main.name = username;
 
-	sendCharacter(main_player);
+	sendCharacter(main);
 
 	sf::Packet packet2;
 
@@ -207,25 +135,59 @@ int main()
 
 		sf::Packet playerPacket;
 
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) updateMain(true, false, false, false, username);
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) updateMain(false, true, false, false, username);
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) updateMain(false, false, true, false, username);
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) updateMain(false, false, false, true, username);
+		for (int x = 0; x < players.size(); ++x) {
+			if (players.at(x).name == username) {
+				if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) players.at(x).up = true;
+				if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) players.at(x).down = true;
+				if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) players.at(x).left = true;;
+				if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) players.at(x).right = true;
 
-		if (!sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) updateMain(false, false, false, false, username);
-		if (!sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) updateMain(false, false, false, false, username);
-		if (!sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) updateMain(false, false, false, false, username);
-		if (!sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) updateMain(false, false, false, false, username);
+				if (!sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) players.at(x).up = false;
+				if (!sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) players.at(x).down = false;
+				if (!sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) players.at(x).left = false;
+				if (!sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) players.at(x).right = false;
 
-		sendPlayers(players);
+				if(players.at(x).up) {
+					players.at(x).yvel = -5;
+				}
+
+				if (players.at(x).down) {
+					players.at(x).yvel = 5;
+				}
+
+				if (players.at(x).left) {
+					players.at(x).xvel = -5;
+				}
+
+				if (players.at(x).right) {
+					players.at(x).xvel = 5;
+				}
+
+				if (!players.at(x).up && !players.at(x).down) {
+					players.at(x).yvel = 0;
+				}
+
+				if (!players.at(x).left && !players.at(x).right) {
+					players.at(x).xvel = 0;
+				}
+				
+				players.at(x).xpos += players.at(x).xvel;
+				players.at(x).ypos += players.at(x).yvel;
+			}
+
+		}
 
 		for (auto x = 0u; x < players.size(); x++) {
 			window.draw(players.at(x).image);
-			players.at(x).update();
+			players.at(x).image.setPosition(players.at(x).xpos, players.at(x).ypos);
+
+			players.at(x).image.move(players.at(x).xvel, players.at(x).yvel);
 			if (players.at(x).name == username) {
 				sendCharacter(players.at(x));
 			}
 		};
+
+		sendPlayers(players);
 
 		while (socket.receive(playerPacket) == sf::Socket::Done) {
 			std::cout << "Socket received \n";

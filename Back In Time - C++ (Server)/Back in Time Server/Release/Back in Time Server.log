@@ -6,8 +6,8 @@ c:\users\skinn\onedrive\documents\projects\gamelab\back-in-time\back in time - c
 c:\users\skinn\onedrive\documents\projects\gamelab\back-in-time\back in time - c++ (server)\back in time server\back in time server.cpp(162): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
 c:\users\skinn\onedrive\documents\projects\gamelab\back-in-time\back in time - c++ (server)\back in time server\back in time server.cpp(163): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
   Generating code
-  15 of 177 functions ( 8.5%) were compiled, the rest were copied from previous compilation.
-    4 functions were new in current compilation
-    10 functions had inline decision re-evaluated but remain unchanged
+  1 of 177 functions ( 0.6%) were compiled, the rest were copied from previous compilation.
+    0 functions were new in current compilation
+    0 functions had inline decision re-evaluated but remain unchanged
   Finished generating code
   Back in Time Server.vcxproj -> C:\Users\skinn\OneDrive\Documents\Projects\GameLab\Back-in-Time\Back In Time - C++ (Client)\Release\Back in Time Server.exe
